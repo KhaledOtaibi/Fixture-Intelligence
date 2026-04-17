@@ -39,8 +39,8 @@ export default function Login() {
                             <Ship className="w-5 h-5 text-white" strokeWidth={1.5} />
                         </div>
                         <div>
-                            <div className="font-heading font-black text-xl tracking-tighter">EMERGENT</div>
-                            <div className="text-[10px] tracking-[0.25em] uppercase text-bahri-orange font-semibold mt-0.5">by Bahri</div>
+                            <div className="font-heading font-black text-xl tracking-tighter">FIXTURE INTELLIGENCE</div>
+                            <div className="text-[10px] tracking-[0.25em] uppercase text-bahri-orange font-semibold mt-0.5">AI Platform</div>
                         </div>
                     </div>
                     <div>
@@ -51,7 +51,7 @@ export default function Login() {
                             <span className="text-bahri-orange">for charter parties.</span>
                         </h1>
                         <p className="text-zinc-200 max-w-md text-base leading-relaxed">
-                            Centralised platform for Chartering, Legal, Operations, and Management teams at Bahri. Recaps, clauses, approvals and audit trail — unified.
+                            AI-first platform for Chartering, Legal, Operations, and Management teams. Recaps, clauses, approvals and audit trail — unified.
                         </p>
                     </div>
                 </div>

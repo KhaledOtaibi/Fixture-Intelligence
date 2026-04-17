@@ -35,8 +35,9 @@ export default function Layout({ children }) {
                             <Ship className="w-5 h-5 text-white" strokeWidth={1.5} />
                         </div>
                         <div>
-                            <div className="font-heading font-black text-xl tracking-tighter leading-none">EMERGENT</div>
-                            <div className="text-[10px] tracking-[0.25em] uppercase text-bahri-orange font-semibold mt-1">by Bahri</div>
+                            <div className="font-heading font-black text-xl tracking-tighter leading-none">FIXTURE</div>
+                            <div className="font-heading font-black text-xl tracking-tighter leading-none">INTELLIGENCE</div>
+                            <div className="text-[10px] tracking-[0.25em] uppercase text-bahri-orange font-semibold mt-1">AI</div>
                         </div>
                     </Link>
                 </div>

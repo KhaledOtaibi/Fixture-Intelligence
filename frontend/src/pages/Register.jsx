@@ -50,14 +50,14 @@ export default function Register() {
                             <Ship className="w-5 h-5 text-white" strokeWidth={1.5} />
                         </div>
                         <div>
-                            <div className="font-heading font-black text-xl tracking-tighter">EMERGENT</div>
-                            <div className="text-[10px] tracking-[0.25em] uppercase text-bahri-orange font-semibold mt-0.5">by Bahri</div>
+                            <div className="font-heading font-black text-xl tracking-tighter">FIXTURE INTELLIGENCE</div>
+                            <div className="text-[10px] tracking-[0.25em] uppercase text-bahri-orange font-semibold mt-0.5">AI Platform</div>
                         </div>
                     </div>
                     <div>
                         <div className="text-[10px] tracking-[0.3em] uppercase text-bahri-orange font-semibold mb-4">Join the platform</div>
                         <h1 className="font-heading text-5xl font-black tracking-tighter leading-none mb-4">
-                            Built for Bahri teams.<br />
+                            Built for shipping teams.<br />
                             <span className="text-bahri-orange">Chartering, Legal, Ops.</span>
                         </h1>
                         <p className="text-zinc-200 max-w-md text-base leading-relaxed">

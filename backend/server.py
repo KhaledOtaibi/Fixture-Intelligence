@@ -32,7 +32,7 @@ EMERGENT_LLM_KEY = os.environ['EMERGENT_LLM_KEY']
 STORAGE_URL = "https://integrations.emergentagent.com/objstore/api/v1/storage"
 APP_NAME = "emergent-fip"
 
-app = FastAPI(title="Emergent — Contract, Recap & Clause Platform")
+app = FastAPI(title="Fixture Intelligence AI")
 api_router = APIRouter(prefix="/api")
 security = HTTPBearer()
 
@@ -1051,7 +1051,7 @@ async def seed_demo(current=Depends(get_current_user)):
         })
 
     await db.notices.insert_one({
-        "id": str(uuid.uuid4()), "title": "Welcome to Emergent",
+        "id": str(uuid.uuid4()), "title": "Welcome to Fixture Intelligence AI",
         "body": "This platform is your single source of truth for recaps, charter parties, and the clause library. AI-assisted content is for information retrieval only — not legal advice.",
         "pinned": True, "user_id": current["id"], "user_name": current["name"],
         "user_role": current["role"], "created_at": now, "seeded": True,
@@ -1063,7 +1063,7 @@ async def seed_demo(current=Depends(get_current_user)):
 # ---------- Health ----------
 @api_router.get("/")
 async def root():
-    return {"service": "Emergent — Contract, Recap & Clause Platform", "status": "ok"}
+    return {"service": "Fixture Intelligence AI", "status": "ok"}
 
 
 app.include_router(api_router)
