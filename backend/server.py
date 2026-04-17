@@ -492,7 +492,7 @@ async def list_recaps(
         query["charterer"] = {"$regex": charterer, "$options": "i"}
     if status_filter:
         query["status"] = status_filter
-    docs = await db.recaps.find(query, {"_id": 0}).sort("updated_at", -1).to_list(500)
+    docs = await db.recaps.find(query, {"_id": 0}).sort("updated_at", -1).to_list(100)
     for d in docs:
         d.setdefault("charter_party_id", gen_cp_id())
         d.setdefault("linked_clauses", [])
@@ -628,7 +628,7 @@ async def list_approvals(recap_id: str, current=Depends(get_current_user)):
 # ---------- Comments ----------
 @api_router.post("/recaps/{recap_id}/comments", response_model=Comment)
 async def create_comment(recap_id: str, data: CommentCreate, current=Depends(get_current_user)):
-    doc = await db.recaps.find_one({"id": recap_id}, {"_id": 0})
+    doc = await db.recaps.find_one({"id": recap_id}, {"_id": 0, "id": 1})
     if not doc:
         raise HTTPException(status_code=404, detail="Recap not found")
     c = Comment(
@@ -687,7 +687,7 @@ async def list_clauses(
             {"title": {"$regex": search, "$options": "i"}},
             {"text": {"$regex": search, "$options": "i"}},
         ]
-    docs = await db.clauses.find(query, {"_id": 0}).sort("updated_at", -1).to_list(500)
+    docs = await db.clauses.find(query, {"_id": 0}).sort("updated_at", -1).to_list(100)
     return [Clause(**_clean_clause(d)) for d in docs]
 
 @api_router.get("/clauses/{clause_id}", response_model=Clause)
@@ -929,7 +929,10 @@ def _parse_day(s: str) -> Optional[datetime]:
 
 @api_router.get("/alerts", response_model=List[Alert])
 async def list_alerts(current=Depends(get_current_user)):
-    docs = await db.recaps.find({"status": {"$in": ["draft", "under_review", "approved", "on_subs"]}}, {"_id": 0}).to_list(500)
+    docs = await db.recaps.find(
+        {"status": {"$in": ["draft", "under_review", "approved", "on_subs"]}},
+        {"_id": 0, "id": 1, "vessel_name": 1, "charter_party_id": 1, "status": 1, "structured.laycan_start": 1},
+    ).to_list(200)
     alerts: List[Alert] = []
     now = datetime.now(timezone.utc)
     for d in docs:
