@@ -40,11 +40,11 @@ export default function Login() {
                         </div>
                         <div>
                             <div className="font-heading font-black text-xl tracking-tighter">FIXTURE INTELLIGENCE</div>
-                            <div className="text-[10px] tracking-[0.25em] uppercase text-bahri-orange font-semibold mt-0.5">AI Platform</div>
+                            <div className="text-[10px] tracking-[0.25em] uppercase text-bahri-orange font-semibold mt-0.5">Contract · Recap · Clause</div>
                         </div>
                     </div>
                     <div>
-                        <div className="text-[10px] tracking-[0.3em] uppercase text-bahri-orange font-semibold mb-4">Contract · Recap · Clause</div>
+                        <div className="text-[10px] tracking-[0.3em] uppercase text-bahri-orange font-semibold mb-4">Shipping Command Center</div>
                         <h1 className="font-heading text-5xl font-black tracking-tighter leading-none mb-4">
                             Your single source of truth
                             <br />

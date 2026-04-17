@@ -197,8 +197,16 @@ export default function RecapDetail() {
                         </div>
                         <h1 className="font-heading text-5xl font-black tracking-tighter text-bahri-blue leading-none">{recap.vessel_name}</h1>
                         <div className="text-sm text-zinc-500 mt-2">
-                            {recap.charterer} {s.vessel_imo && `· IMO ${s.vessel_imo}`} · Created by {recap.created_by_name} · Updated {new Date(recap.updated_at).toLocaleString()}
+                            {recap.charterer} {s.vessel_imo && `· IMO ${s.vessel_imo}`} · Created by {recap.created_by_name} · {new Date(recap.created_at).toLocaleDateString()}
                         </div>
+                        {recap.last_modified_by_name && (
+                            <div className="mt-2 inline-flex items-center gap-2 text-xs bg-bahri-orange/10 border border-bahri-orange/30 text-bahri-orange px-2.5 py-1 font-semibold" data-testid="last-modified-badge">
+                                <span className="uppercase tracking-wider text-[10px]">Last Modified</span>
+                                <span className="text-zinc-900">{recap.last_modified_by_name}</span>
+                                <span className="text-zinc-600 font-mono">· {recap.last_modified_by_role}</span>
+                                <span className="text-zinc-500 font-mono">· {new Date(recap.last_modified_at).toLocaleString()}</span>
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -282,10 +290,16 @@ export default function RecapDetail() {
                                         <button key={i} data-testid={`version-item-${i}`}
                                             onClick={() => { setVersionCurr(v); setVersionPrev(i > 0 ? recap.versions[i - 1] : null); }}
                                             className={`w-full text-left p-4 border-b border-zinc-100 transition-colors ${isCurr ? "bg-bahri-orange/5 border-l-4 border-l-bahri-orange" : "hover:bg-zinc-50"}`}>
-                                            <div className="font-mono font-bold text-sm text-zinc-950">{v.version_label}</div>
-                                            <div className="text-xs text-zinc-500 mt-0.5">{new Date(v.created_at).toLocaleDateString()}</div>
-                                            <div className="text-xs text-zinc-600 mt-1">{v.created_by_name}</div>
-                                            {v.note && <div className="text-xs text-zinc-500 mt-1 italic">{v.note}</div>}
+                                            <div className="flex items-center justify-between">
+                                                <div className="font-mono font-bold text-sm text-zinc-950">{v.version_label}</div>
+                                                <div className="text-[10px] text-zinc-400 font-mono">{new Date(v.created_at).toLocaleDateString()}</div>
+                                            </div>
+                                            <div className="text-xs text-zinc-700 font-semibold mt-1">{v.created_by_name}</div>
+                                            {v.created_by_role && <div className="label-caps text-[9px]">{v.created_by_role}</div>}
+                                            {v.changed_fields?.length > 0 && v.changed_fields[0] !== "initial" && (
+                                                <div className="text-[10px] text-bahri-orange font-mono mt-1 line-clamp-1">Δ {v.changed_fields.join(", ")}</div>
+                                            )}
+                                            {v.note && <div className="text-xs text-zinc-500 mt-1 italic line-clamp-2">{v.note}</div>}
                                         </button>
                                     );
                                 })}

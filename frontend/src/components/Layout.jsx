@@ -37,7 +37,6 @@ export default function Layout({ children }) {
                         <div>
                             <div className="font-heading font-black text-xl tracking-tighter leading-none">FIXTURE</div>
                             <div className="font-heading font-black text-xl tracking-tighter leading-none">INTELLIGENCE</div>
-                            <div className="text-[10px] tracking-[0.25em] uppercase text-bahri-orange font-semibold mt-1">AI</div>
                         </div>
                     </Link>
                 </div>

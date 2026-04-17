@@ -32,7 +32,7 @@ EMERGENT_LLM_KEY = os.environ['EMERGENT_LLM_KEY']
 STORAGE_URL = "https://integrations.emergentagent.com/objstore/api/v1/storage"
 APP_NAME = "emergent-fip"
 
-app = FastAPI(title="Fixture Intelligence AI")
+app = FastAPI(title="Fixture Intelligence")
 api_router = APIRouter(prefix="/api")
 security = HTTPBearer()
 
@@ -136,8 +136,10 @@ class Version(BaseModel):
     structured: StructuredRecap
     created_by: str
     created_by_name: str
+    created_by_role: Optional[str] = None
     created_at: str
     note: Optional[str] = None
+    changed_fields: Optional[List[str]] = None
 
 class Recap(BaseModel):
     id: str
@@ -153,6 +155,10 @@ class Recap(BaseModel):
     created_by_name: str
     created_at: str
     updated_at: str
+    last_modified_by: Optional[str] = None
+    last_modified_by_name: Optional[str] = None
+    last_modified_by_role: Optional[str] = None
+    last_modified_at: Optional[str] = None
 
 class Comment(BaseModel):
     id: str
@@ -185,10 +191,15 @@ ClauseCategory = Literal["BIMCO", "Shelltime", "Asbatankvoy", "Piracy", "Sanctio
 class ClauseVersion(BaseModel):
     version_label: str
     text: str
+    title: Optional[str] = None
+    category: Optional[str] = None
+    tags: Optional[List[str]] = None
     created_by: str
     created_by_name: str
+    created_by_role: Optional[str] = None
     created_at: str
     change_note: Optional[str] = None
+    changed_fields: Optional[List[str]] = None
 
 class Clause(BaseModel):
     id: str
@@ -202,6 +213,10 @@ class Clause(BaseModel):
     created_by_name: str
     created_at: str
     updated_at: str
+    last_modified_by: Optional[str] = None
+    last_modified_by_name: Optional[str] = None
+    last_modified_by_role: Optional[str] = None
+    last_modified_at: Optional[str] = None
 
 class ClauseCreate(BaseModel):
     title: str
@@ -456,8 +471,10 @@ async def create_recap(data: RecapCreate, current=Depends(get_current_user)):
         structured=data.structured,
         created_by=current["id"],
         created_by_name=current["name"],
+        created_by_role=current["role"],
         created_at=now,
         note="Initial draft",
+        changed_fields=["initial"],
     )
     recap = Recap(
         id=rid,
@@ -473,6 +490,10 @@ async def create_recap(data: RecapCreate, current=Depends(get_current_user)):
         created_by_name=current["name"],
         created_at=now,
         updated_at=now,
+        last_modified_by=current["id"],
+        last_modified_by_name=current["name"],
+        last_modified_by_role=current["role"],
+        last_modified_at=now,
     )
     await db.recaps.insert_one(recap.model_dump())
     await log_audit("recap", rid, "created", current, f"Created recap {recap.charter_party_id} — {recap.vessel_name}")
@@ -519,20 +540,34 @@ async def update_recap(recap_id: str, data: RecapUpdate, current=Depends(get_cur
     if not doc:
         raise HTTPException(status_code=404, detail="Recap not found")
     now = now_iso()
-    updates: Dict[str, Any] = {"updated_at": now}
-    create_new_version = False
-    if data.raw_text is not None:
+    updates: Dict[str, Any] = {
+        "updated_at": now,
+        "last_modified_by": current["id"],
+        "last_modified_by_name": current["name"],
+        "last_modified_by_role": current["role"],
+        "last_modified_at": now,
+    }
+    changed_fields: List[str] = []
+    if data.raw_text is not None and data.raw_text != doc.get("raw_text"):
         updates["raw_text"] = data.raw_text
-        create_new_version = True
+        changed_fields.append("raw_text")
     if data.structured is not None:
-        updates["structured"] = data.structured.model_dump()
+        new_struct = data.structured.model_dump()
+        old_struct = doc.get("structured") or {}
+        for k, v in new_struct.items():
+            if (old_struct.get(k) or None) != (v or None):
+                changed_fields.append(k)
+        updates["structured"] = new_struct
         updates["vessel_name"] = data.structured.vessel_name or doc["vessel_name"]
         updates["charterer"] = data.structured.charterer or doc["charterer"]
-        create_new_version = True
-    if data.status is not None:
+    if data.status is not None and data.status != doc.get("status"):
         updates["status"] = data.status
+        changed_fields.append("status")
 
-    if create_new_version:
+    # ANY content change (raw_text or any structured field) creates a new version
+    content_changed = bool(set(changed_fields) - {"status"})
+
+    if content_changed:
         next_n = len(doc["versions"]) + 1
         label = f"Rev{next_n}" if data.status != "fixed" else "Final"
         new_version = Version(
@@ -541,14 +576,18 @@ async def update_recap(recap_id: str, data: RecapUpdate, current=Depends(get_cur
             structured=StructuredRecap(**updates.get("structured", doc["structured"])),
             created_by=current["id"],
             created_by_name=current["name"],
+            created_by_role=current["role"],
             created_at=now,
             note=data.note,
+            changed_fields=changed_fields,
         ).model_dump()
         await db.recaps.update_one({"id": recap_id}, {"$set": updates, "$push": {"versions": new_version}})
-        await log_audit("recap", recap_id, "revised", current, f"Created {label}. {data.note or ''}")
+        fields_str = ", ".join(changed_fields) if changed_fields else "—"
+        await log_audit("recap", recap_id, "revised", current, f"Created {label} · changed: {fields_str}. {data.note or ''}")
     else:
         await db.recaps.update_one({"id": recap_id}, {"$set": updates})
-        await log_audit("recap", recap_id, "updated", current, f"Updated fields: {', '.join(updates.keys())}")
+        fields_str = ", ".join(changed_fields) if changed_fields else ", ".join(k for k in updates.keys() if k not in {"updated_at", "last_modified_by", "last_modified_by_name", "last_modified_by_role", "last_modified_at"})
+        await log_audit("recap", recap_id, "updated", current, f"Updated: {fields_str or 'no content change'}")
 
     doc = await db.recaps.find_one({"id": recap_id}, {"_id": 0})
     doc.setdefault("charter_party_id", gen_cp_id())
@@ -566,7 +605,12 @@ async def link_clauses(recap_id: str, data: LinkClausesRequest, current=Depends(
     doc = await db.recaps.find_one({"id": recap_id}, {"_id": 0})
     if not doc:
         raise HTTPException(status_code=404, detail="Recap not found")
-    await db.recaps.update_one({"id": recap_id}, {"$set": {"linked_clauses": data.clause_ids, "updated_at": now_iso()}})
+    now = now_iso()
+    await db.recaps.update_one({"id": recap_id}, {"$set": {
+        "linked_clauses": data.clause_ids, "updated_at": now,
+        "last_modified_by": current["id"], "last_modified_by_name": current["name"],
+        "last_modified_by_role": current["role"], "last_modified_at": now,
+    }})
     await log_audit("recap", recap_id, "clauses_linked", current, f"Linked {len(data.clause_ids)} clause(s)")
     return {"linked": len(data.clause_ids)}
 
@@ -615,7 +659,12 @@ async def create_approval(recap_id: str, data: ApprovalAction, current=Depends(g
         created_at=now_iso(),
     )
     await db.approvals.insert_one(approval.model_dump())
-    await db.recaps.update_one({"id": recap_id}, {"$set": {"status": flow["to"], "updated_at": now_iso()}})
+    now2 = now_iso()
+    await db.recaps.update_one({"id": recap_id}, {"$set": {
+        "status": flow["to"], "updated_at": now2,
+        "last_modified_by": current["id"], "last_modified_by_name": current["name"],
+        "last_modified_by_role": current["role"], "last_modified_at": now2,
+    }})
     await log_audit("recap", recap_id, flow["label"], current, f"{flow['label'].title()}: {data.comment or '—'}")
     return approval
 
@@ -657,14 +706,19 @@ async def create_clause(data: ClauseCreate, current=Depends(get_current_user)):
     cid = str(uuid.uuid4())
     ver = ClauseVersion(
         version_label="v1", text=data.text,
+        title=data.title, category=data.category, tags=data.tags,
         created_by=current["id"], created_by_name=current["name"],
+        created_by_role=current["role"],
         created_at=now, change_note="Initial version",
+        changed_fields=["initial"],
     )
     clause = Clause(
         id=cid, title=data.title, category=data.category, tags=data.tags,
         text=data.text, versions=[ver], is_approved=False,
         created_by=current["id"], created_by_name=current["name"],
         created_at=now, updated_at=now,
+        last_modified_by=current["id"], last_modified_by_name=current["name"],
+        last_modified_by_role=current["role"], last_modified_at=now,
     )
     await db.clauses.insert_one(clause.model_dump())
     await log_audit("clause", cid, "created", current, f"New clause '{data.title}' ({data.category})")
@@ -708,32 +762,56 @@ async def update_clause(clause_id: str, data: ClauseUpdate, current=Depends(get_
         raise HTTPException(status_code=403, detail="Only legal/admin can approve clauses")
 
     now = now_iso()
-    updates: Dict[str, Any] = {"updated_at": now}
-    create_version = False
-    if data.title is not None:
-        updates["title"] = data.title
-    if data.category is not None:
-        updates["category"] = data.category
-    if data.tags is not None:
-        updates["tags"] = data.tags
-    if data.text is not None and data.text != doc["text"]:
-        updates["text"] = data.text
-        create_version = True
-    if data.is_approved is not None:
-        updates["is_approved"] = data.is_approved
+    updates: Dict[str, Any] = {
+        "updated_at": now,
+        "last_modified_by": current["id"],
+        "last_modified_by_name": current["name"],
+        "last_modified_by_role": current["role"],
+        "last_modified_at": now,
+    }
+    changed_fields: List[str] = []
 
-    if create_version:
+    if data.title is not None and data.title != doc.get("title"):
+        updates["title"] = data.title
+        changed_fields.append("title")
+    if data.category is not None and data.category != doc.get("category"):
+        updates["category"] = data.category
+        changed_fields.append("category")
+    if data.tags is not None and sorted(data.tags) != sorted(doc.get("tags") or []):
+        updates["tags"] = data.tags
+        changed_fields.append("tags")
+    if data.text is not None and data.text != doc.get("text"):
+        updates["text"] = data.text
+        changed_fields.append("text")
+    if data.is_approved is not None and data.is_approved != doc.get("is_approved", False):
+        updates["is_approved"] = data.is_approved
+        changed_fields.append("is_approved")
+
+    # ANY content/metadata change creates a new version.
+    # Approval-only toggles are tracked in audit but do NOT create a new version.
+    content_changed = bool(set(changed_fields) - {"is_approved"})
+
+    if content_changed:
         next_n = len(doc["versions"]) + 1
         new_version = ClauseVersion(
-            version_label=f"v{next_n}", text=data.text,
-            created_by=current["id"], created_by_name=current["name"],
-            created_at=now, change_note=data.change_note or "Updated",
+            version_label=f"v{next_n}",
+            text=updates.get("text", doc["text"]),
+            title=updates.get("title", doc.get("title")),
+            category=updates.get("category", doc.get("category")),
+            tags=updates.get("tags", doc.get("tags") or []),
+            created_by=current["id"],
+            created_by_name=current["name"],
+            created_by_role=current["role"],
+            created_at=now,
+            change_note=data.change_note or f"Changed: {', '.join(changed_fields)}",
+            changed_fields=changed_fields,
         ).model_dump()
         await db.clauses.update_one({"id": clause_id}, {"$set": updates, "$push": {"versions": new_version}})
-        await log_audit("clause", clause_id, "revised", current, f"New version v{next_n}: {data.change_note or ''}")
+        await log_audit("clause", clause_id, "revised", current, f"v{next_n} · changed: {', '.join(changed_fields)}. {data.change_note or ''}")
     else:
         await db.clauses.update_one({"id": clause_id}, {"$set": updates})
-        await log_audit("clause", clause_id, "updated", current, f"Updated: {', '.join(updates.keys())}")
+        if changed_fields:
+            await log_audit("clause", clause_id, "updated", current, f"{'Approved' if data.is_approved else 'Approval removed'}")
 
     doc = await db.clauses.find_one({"id": clause_id}, {"_id": 0})
     return Clause(**_clean_clause(doc))
@@ -1054,7 +1132,7 @@ async def seed_demo(current=Depends(get_current_user)):
         })
 
     await db.notices.insert_one({
-        "id": str(uuid.uuid4()), "title": "Welcome to Fixture Intelligence AI",
+        "id": str(uuid.uuid4()), "title": "Welcome to Fixture Intelligence",
         "body": "This platform is your single source of truth for recaps, charter parties, and the clause library. AI-assisted content is for information retrieval only — not legal advice.",
         "pinned": True, "user_id": current["id"], "user_name": current["name"],
         "user_role": current["role"], "created_at": now, "seeded": True,
@@ -1066,7 +1144,7 @@ async def seed_demo(current=Depends(get_current_user)):
 # ---------- Health ----------
 @api_router.get("/")
 async def root():
-    return {"service": "Fixture Intelligence AI", "status": "ok"}
+    return {"service": "Fixture Intelligence", "status": "ok"}
 
 
 app.include_router(api_router)

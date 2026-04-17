@@ -134,12 +134,16 @@ export default function ClauseLibrary() {
                                                 </span>
                                             )}
                                         </div>
-                                        <div className="flex items-center gap-3 mb-2">
+                                        <div className="flex items-center gap-3 mb-2 flex-wrap">
                                             <span className="text-[10px] font-bold uppercase tracking-wider text-bahri-orange bg-bahri-orange/10 px-2 py-0.5 border border-bahri-orange/30">
                                                 {c.category}
                                             </span>
                                             <span className="text-xs font-mono text-zinc-500">v{c.versions?.length || 1} · {c.versions?.length || 1} revs</span>
-                                            <span className="text-xs text-zinc-500">Updated {new Date(c.updated_at).toLocaleDateString()}</span>
+                                            {c.last_modified_by_name ? (
+                                                <span className="text-xs text-zinc-600">Modified by <span className="font-semibold text-zinc-900">{c.last_modified_by_name}</span> · {new Date(c.last_modified_at || c.updated_at).toLocaleDateString()}</span>
+                                            ) : (
+                                                <span className="text-xs text-zinc-500">Updated {new Date(c.updated_at).toLocaleDateString()}</span>
+                                            )}
                                         </div>
                                         <div className="text-sm text-zinc-700 line-clamp-2">{c.text}</div>
                                         {c.tags?.length > 0 && (

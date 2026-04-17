@@ -51,7 +51,7 @@ export default function Register() {
                         </div>
                         <div>
                             <div className="font-heading font-black text-xl tracking-tighter">FIXTURE INTELLIGENCE</div>
-                            <div className="text-[10px] tracking-[0.25em] uppercase text-bahri-orange font-semibold mt-0.5">AI Platform</div>
+                            <div className="text-[10px] tracking-[0.25em] uppercase text-bahri-orange font-semibold mt-0.5">Contract · Recap · Clause</div>
                         </div>
                     </div>
                     <div>
