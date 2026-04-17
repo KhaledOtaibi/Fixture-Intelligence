@@ -4,6 +4,14 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    --bahri-blue: #002856;
+    --bahri-blue-700: #001c3d;
+    --bahri-blue-50: #eef3f9;
+    --bahri-orange: #f15a29;
+    --bahri-orange-600: #d94d1e;
+}
+
 body {
     margin: 0;
     font-family: "IBM Plex Sans", sans-serif;
@@ -30,19 +38,19 @@ code, pre, .font-mono {
         --card-foreground: 240 10% 4%;
         --popover: 0 0% 100%;
         --popover-foreground: 240 10% 4%;
-        --primary: 217 91% 49%;
+        --primary: 214 100% 17%;
         --primary-foreground: 0 0% 100%;
         --secondary: 240 5% 96%;
         --secondary-foreground: 240 10% 4%;
         --muted: 240 5% 96%;
         --muted-foreground: 240 4% 46%;
-        --accent: 240 5% 96%;
-        --accent-foreground: 240 10% 4%;
+        --accent: 15 87% 55%;
+        --accent-foreground: 0 0% 100%;
         --destructive: 0 84% 60%;
         --destructive-foreground: 0 0% 100%;
         --border: 240 6% 90%;
         --input: 240 6% 90%;
-        --ring: 217 91% 49%;
+        --ring: 214 100% 17%;
         --radius: 0rem;
     }
 }
@@ -52,7 +60,7 @@ code, pre, .font-mono {
     body { @apply bg-background text-foreground; }
 
     ::selection {
-        background-color: #2563eb;
+        background-color: #002856;
         color: #ffffff;
     }
 }
@@ -65,7 +73,17 @@ code, pre, .font-mono {
         text-transform: uppercase;
         color: #71717a;
     }
-    .hover-row:hover { background-color: rgba(244, 244, 245, 0.6); }
+    .bg-bahri-blue { background-color: var(--bahri-blue); }
+    .bg-bahri-blue-700 { background-color: var(--bahri-blue-700); }
+    .bg-bahri-blue-50 { background-color: var(--bahri-blue-50); }
+    .text-bahri-blue { color: var(--bahri-blue); }
+    .border-bahri-blue { border-color: var(--bahri-blue); }
+    .bg-bahri-orange { background-color: var(--bahri-orange); }
+    .bg-bahri-orange-600 { background-color: var(--bahri-orange-600); }
+    .text-bahri-orange { color: var(--bahri-orange); }
+    .border-bahri-orange { border-color: var(--bahri-orange); }
+    .ring-bahri-blue:focus { outline: none; box-shadow: 0 0 0 2px var(--bahri-blue); }
+    .hover-bahri-orange:hover { color: var(--bahri-orange); }
 }
 
 @layer base {
@@ -83,7 +101,6 @@ code, pre, .font-mono {
     }
 }
 
-/* Print styles for PDF export */
 @media print {
     body * { visibility: hidden; }
     #print-area, #print-area * { visibility: visible; }

@@ -8,6 +8,12 @@ import Register from "@/pages/Register";
 import Dashboard from "@/pages/Dashboard";
 import CreateRecap from "@/pages/CreateRecap";
 import RecapDetail from "@/pages/RecapDetail";
+import ClauseLibrary from "@/pages/ClauseLibrary";
+import ClauseDetail from "@/pages/ClauseDetail";
+import ClauseCompare from "@/pages/ClauseCompare";
+import Alerts from "@/pages/Alerts";
+import Noticeboard from "@/pages/Noticeboard";
+import Audit from "@/pages/Audit";
 import Layout from "@/components/Layout";
 
 function Protected({ children }) {
@@ -37,6 +43,12 @@ function App() {
                         <Route path="/recaps/new" element={<Protected><CreateRecap /></Protected>} />
                         <Route path="/parser" element={<Protected><CreateRecap /></Protected>} />
                         <Route path="/recaps/:id" element={<Protected><RecapDetail /></Protected>} />
+                        <Route path="/clauses" element={<Protected><ClauseLibrary /></Protected>} />
+                        <Route path="/clauses/compare" element={<Protected><ClauseCompare /></Protected>} />
+                        <Route path="/clauses/:id" element={<Protected><ClauseDetail /></Protected>} />
+                        <Route path="/alerts" element={<Protected><Alerts /></Protected>} />
+                        <Route path="/noticeboard" element={<Protected><Noticeboard /></Protected>} />
+                        <Route path="/audit" element={<Protected><Audit /></Protected>} />
                     </Routes>
                 </BrowserRouter>
             </AuthProvider>
