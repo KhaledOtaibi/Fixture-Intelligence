@@ -1,0 +1,128 @@
+{
+  "theme": "light",
+  "archetype": "Archetype 4 (Swiss & High-Contrast)",
+  "vibe": "Authority, clarity, functional beauty, command-center precision. Objective, rigid, and functional.",
+  "colors": {
+    "background": {
+      "default": "bg-white",
+      "subtle": "bg-zinc-50",
+      "muted": "bg-zinc-100",
+      "inverse": "bg-zinc-950"
+    },
+    "text": {
+      "primary": "text-zinc-950",
+      "secondary": "text-zinc-500",
+      "muted": "text-zinc-400",
+      "inverse": "text-white"
+    },
+    "border": {
+      "default": "border-zinc-200",
+      "subtle": "border-zinc-100",
+      "focus": "border-blue-600",
+      "strong": "border-zinc-900"
+    },
+    "brand": {
+      "primary": "bg-blue-600",
+      "primary_hover": "bg-blue-700",
+      "primary_text": "text-white",
+      "accent": "bg-amber-400"
+    },
+    "diff": {
+      "added_bg": "bg-green-100",
+      "added_text": "text-green-800",
+      "removed_bg": "bg-red-100",
+      "removed_text": "text-red-800"
+    },
+    "status": {
+      "draft": "bg-zinc-100 text-zinc-700 border border-zinc-200",
+      "under_review": "bg-amber-100 text-amber-800 border border-amber-200",
+      "approved": "bg-blue-100 text-blue-800 border border-blue-200",
+      "fixed": "bg-emerald-100 text-emerald-800 border border-emerald-200"
+    }
+  },
+  "typography": {
+    "fonts": {
+      "headings": "'Chivo', sans-serif",
+      "body": "'IBM Plex Sans', sans-serif",
+      "mono": "'JetBrains Mono', monospace"
+    },
+    "rules": {
+      "h1": "text-4xl font-black tracking-tighter leading-none text-zinc-950",
+      "h2": "text-2xl font-bold tracking-tight text-zinc-950",
+      "h3": "text-xl font-bold tracking-tight text-zinc-950",
+      "h4": "text-lg font-semibold tracking-tight text-zinc-950",
+      "body": "text-sm text-zinc-700 leading-relaxed",
+      "mono_text": "font-mono text-sm tracking-tight text-zinc-800",
+      "labels": "text-xs font-bold uppercase tracking-[0.2em] text-zinc-500"
+    }
+  },
+  "layout_and_spacing": {
+    "spacing_scale": "Generous internal padding for reading (p-6, p-8). Tight functional spacing for data tables (p-2, p-3).",
+    "dashboard_grid": "Grid layout using grid-cols-1 md:grid-cols-4. Gap-6. Strictly cardless or 1px flat borders. 0px border radius.",
+    "split_panel": "For the AI Parser: A split 50/50 screen (grid grid-cols-2). Left panel: raw text input with bg-zinc-50. Right panel: structured data forms with bg-white. Separated by a single stark border-r border-zinc-200."
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-none px-6 py-2.5 transition-colors",
+      "secondary": "bg-white border border-zinc-300 hover:bg-zinc-50 text-zinc-950 rounded-none px-6 py-2.5 transition-colors",
+      "danger": "bg-red-500 hover:bg-red-600 text-white font-medium rounded-none px-6 py-2.5 transition-colors"
+    },
+    "cards": {
+      "style": "bg-white border border-zinc-200 rounded-none shadow-none p-6"
+    },
+    "inputs": {
+      "style": "bg-transparent border border-zinc-300 rounded-none p-3 text-sm focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all focus:outline-none w-full",
+      "textarea": "font-mono text-sm leading-relaxed min-h-[400px] resize-none"
+    },
+    "badges": {
+      "style": "rounded-none px-2.5 py-1 text-xs font-bold uppercase tracking-wider"
+    },
+    "tables": {
+      "style": "w-full text-sm text-left border-collapse",
+      "header": "border-y border-zinc-300 bg-zinc-50 py-3 px-4 font-bold text-zinc-600 uppercase tracking-wider text-xs",
+      "row": "border-b border-zinc-200 hover:bg-zinc-50/50 transition-colors",
+      "cell": "py-3 px-4 align-top"
+    },
+    "tabs": {
+      "style": "flex border-b border-zinc-200 gap-8",
+      "active": "border-b-2 border-blue-600 text-blue-600 font-bold pb-2",
+      "inactive": "text-zinc-500 hover:text-zinc-950 pb-2 transition-colors font-medium"
+    }
+  },
+  "motion_and_interactions": {
+    "hover_states": "Crisp color shifts. No scaling or bouncing animations. Use explicit hover text colors.",
+    "transitions": "transition-colors duration-150 ease-in-out",
+    "focus": "Focus states must have a sharp 2px ring in Signal Blue (ring-blue-600) with no ring-offset."
+  },
+  "icons_and_assets": {
+    "icon_library": "lucide-react",
+    "icon_style": "stroke-width: 1.5. Clean, strict, non-playful."
+  },
+  "media": {
+    "images": [
+      {
+        "category": "login_background",
+        "url": "https://images.unsplash.com/photo-1758900348926-cd1ccbc15fef?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDJ8MHwxfHNlYXJjaHwzfHxjYXJnbyUyMHNoaXAlMjBzZWElMjBkcm9uZSUyMHZpZXd8ZW58MHx8fHwxNzc2NDM3NjU1fDA&ixlib=rb-4.1.0&q=85",
+        "description": "Aerial view of a cargo ship on the ocean. To be used on the login screen, split 50/50 with the login form. The image should NOT have a heavy overlay if it occupies its own panel."
+      },
+      {
+        "category": "empty_state_ai",
+        "url": "https://images.unsplash.com/photo-1764258560063-d14eea44de4e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NjZ8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMGRhdGElMjBsaW5lcyUyMG1pbmltYWxpc3R8ZW58MHx8fHwxNzc2NDM3NjU1fDA&ixlib=rb-4.1.0&q=85",
+        "description": "Abstract pattern of wavy grey lines on white background. Use this inside the AI parser loading state or empty state to suggest processing data."
+      }
+    ]
+  },
+  "accessibility_and_testing": {
+    "testing_attributes": "All interactive elements (buttons, links, form inputs, tabs) MUST include a kebab-case data-testid attribute based on their role.",
+    "contrast": "Adhere strictly to 4.5:1 ratio. Text colors over diff backgrounds must be dark enough (e.g. text-green-900 over bg-green-100)."
+  },
+  "instructions_to_main_agent": [
+    "Install Google Fonts: 'Chivo' (Headings), 'IBM Plex Sans' (Body), and 'JetBrains Mono' (Data/Diffs). Add them to tailwind.config.js.",
+    "Use Lucide-React for all icons. Do not install other icon sets.",
+    "The UI is 'Cardless & Flat'. Do not use shadow-md or soft radiuses. Everything is border-zinc-200 and rounded-none.",
+    "For the 'AI Recap Parser', create a rigid two-column layout. The left column is the raw broker email text (using textarea with font-mono). The right is the structured output form. The user pastes text, clicks 'Parse', and the right side populates.",
+    "For the 'Recap Detail Page', use strict tabs to toggle between Overview, Raw Text, Versions (Diff Viewer), and Approvals.",
+    "Version Diff Viewer must explicitly colorize added words in green and removed words in red, maintaining a monospaced layout to simulate a code diff.",
+    "Always include explicit 'data-testid' on UI elements for testing."
+  ]
+}
