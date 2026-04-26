@@ -16,7 +16,8 @@ import bcrypt
 import jwt
 from datetime import datetime, timezone, timedelta
 
-from emergentintegrations.llm.chat import LlmChat, UserMessage
+from openai import OpenAI
+client = OpenAI()
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
