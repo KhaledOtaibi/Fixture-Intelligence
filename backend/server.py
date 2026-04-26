@@ -421,8 +421,8 @@ def extract_json(text: str) -> Dict[str, Any]:
 async def parse_recap(data: ParseRequest, current=Depends(get_current_user)):
     if not data.raw_text.strip():
         raise HTTPException(status_code=400, detail="Empty text")
-   try:
-        response = client.chat.completions.create(
+  try:
+    response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": PARSER_SYSTEM},
@@ -430,7 +430,9 @@ async def parse_recap(data: ParseRequest, current=Depends(get_current_user)):
         ],
         temperature=0
     )
+
     content = response.choices[0].message.content
+
 except Exception as e:
     logger.error(f"LLM error: {e}")
     raise HTTPException(status_code=500, detail=f"AI parsing failed: {str(e)}")
