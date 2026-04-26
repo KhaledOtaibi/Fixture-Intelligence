@@ -421,13 +421,21 @@ def extract_json(text: str) -> Dict[str, Any]:
 async def parse_recap(data: ParseRequest, current=Depends(get_current_user)):
     if not data.raw_text.strip():
         raise HTTPException(status_code=400, detail="Empty text")
-    chat = LlmChat(api_key=EMERGENT_LLM_KEY, session_id=f"parse-{uuid.uuid4()}", system_message=PARSER_SYSTEM).with_model("openai", "gpt-5.2")
     try:
-        response = await chat.send_message(UserMessage(text=data.raw_text))
-    except Exception as e:
-        logger.error(f"LLM error: {e}")
-        raise HTTPException(status_code=500, detail=f"AI parsing failed: {str(e)}")
-    parsed = extract_json(response)
+    response = client.chat.completions.create(
+        model="gpt-5-mini",
+        messages=[
+            {"role": "system", "content": PARSER_SYSTEM},
+            {"role": "user", "content": data.raw_text}
+        ],
+        temperature=0
+    )
+    content = response.choices[0].message.content
+except Exception as e:
+    logger.error(f"LLM error: {e}")
+    raise HTTPException(status_code=500, detail=f"AI parsing failed: {str(e)}")
+
+parsed = extract_json(content)
     allowed = StructuredRecap.model_fields.keys()
     clean = {k: (str(v) if v is not None else None) for k, v in parsed.items() if k in allowed}
     return StructuredRecap(**clean)
