@@ -29,7 +29,7 @@ db = client[os.environ['DB_NAME']]
 JWT_SECRET = os.environ['JWT_SECRET']
 JWT_ALGO = "HS256"
 JWT_EXP_HOURS = 24 * 7
-EMERGENT_LLM_KEY = os.environ['EMERGENT_LLM_KEY']
+
 STORAGE_URL = os.environ.get("STORAGE_URL", "https://integrations.emergentagent.com/objstore/api/v1/storage")
 APP_NAME = os.environ.get("APP_NAME", "fixture-intelligence")
 
