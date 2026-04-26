@@ -421,9 +421,9 @@ def extract_json(text: str) -> Dict[str, Any]:
 async def parse_recap(data: ParseRequest, current=Depends(get_current_user)):
     if not data.raw_text.strip():
         raise HTTPException(status_code=400, detail="Empty text")
-    try:
-    response = client.chat.completions.create(
-        model="gpt-5-mini",
+   try:
+        response = client.chat.completions.create(
+        model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": PARSER_SYSTEM},
             {"role": "user", "content": data.raw_text}
